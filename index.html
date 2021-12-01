@@ -13,7 +13,6 @@
 	<link rel="stylesheet" href="style.css">
 	<title>Automated Course Scheduling System </title>
 	<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
-	<script src="jquery.sticky.js"></script>
 	<script type="text/javascript" src="courses.json"> </script>
 	<script type="text/javascript" src="data.json"> </script>
 	
@@ -28,22 +27,24 @@
 		<input  type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for classes..." title="Type in a name">
 	</div>
 	
-	<div class="interfacepage">
+	<section class="interfacepage">
 		<div id="classes">
 		</div>
 		<div style="width: 25%; display: flex; flex-direction: column; justify-content: space-between;">
 			
 		
 			<div class="picked">
-				Course Picked: 
+				Course Picked(0/9) 
 			</div>
 			<div class="submit">
 				Submit
 			</div>
 		</div>
 
-	</div>
-
+	</section>
+	<section class="calendar" id="calendar">
+		
+	</section>
 	<script src="script.js"> </script>
 </body>
 

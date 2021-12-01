@@ -84,6 +84,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 addedcourses = []
+addedcoursesindex = []
+addedcoursesshort = []
+cls = []
+
 let picked = document.querySelector(".picked");
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -95,27 +99,94 @@ document.addEventListener('DOMContentLoaded', function() {
 	for (var i = 0; i< buttons.length; i++) (function(i) {
 		buttons[i].onclick = function() {
 			if (addbuttonstate[i].innerHTML == "Add"){
-				addedcourses.push(courses['classes'][i].name);
-				$(buttons[i]).addClass("changecolor");
-				addbuttonstate[i].innerHTML = "Added";
+				if (addedcourses.length === 9) {
+					alert("Maximum of 9 courses allowed!")
+				} else {
+					addedcourses.push(courses['classes'][i].name);
+					addedcoursesindex.push(i);
+					addedcoursesshort.push(courses['classes'][i].name.slice(0,courses['classes'][i].name.indexOf(" - ")));
+					$(buttons[i]).addClass("changecolor");
+					addbuttonstate[i].innerHTML = "Added";
+				}
 			} else{
 				addbuttonstate[i].innerHTML = "Add";
 				$(buttons[i]).removeClass("changecolor");
+				deleteindexfromarray(addedcourses.indexOf(courses['classes'][i].name), addedcoursesshort );
+				deleteindexfromarray(addedcourses.indexOf(courses['classes'][i].name), addedcoursesindex );
 				addedcourses.indexOf(courses['classes'][i].name) !== -1 && addedcourses.splice(addedcourses.indexOf(courses['classes'][i].name), 1);
 			}
 			showaddedcourses();
 		}
 
 	}) (i);
+
+	// for (var i = addedcourses.length - 1; i >= 0; i--) (function(i){
+	// 	closebuttons[i].onclick = function() {
+	// 		i !== -1 && addedcourses.splice(i, 1);
+	// 		i !== -1 && addedcoursesindex.splice(i,1);
+	// 	}
+		
+	// }) (i);
 })
 
+$(".submit").click(function() {
+	$("#calendar").show();
+	// $( this ).slideUp();
+});
+
+function deleteindexfromarray(i, arr){
+	i !== -1 && arr.splice(i,1);
+}
 function showaddedcourses(){
-	picked.innerHTML = "Courses Picked: "
-	for (var i = 0; i < addedcourses.length-1; i++) {
-		picked.innerHTML = picked.innerHTML + addedcourses[i] + ", ";
+	picked.innerHTML = "Courses Picked (" + addedcourses.length + "/9)";
+	let buttons = document.querySelectorAll(".addbutton");
+	let addbuttonstate = document.querySelectorAll(".addbuttonstate");
+	
+	for (var i = 0; i < addedcourses.length; i++) {
+
+		let course = pickedcourse(i, addbuttonstate, buttons);
+		picked.append(course);
 	}
 
-	if (addedcourses.length > 0)  picked.innerHTML = picked.innerHTML + addedcourses[addedcourses.length-1];
+	let closebuttons = document.querySelectorAll(".closebuttons");
+
+	for (var i = closebuttons.length - 1; i >= 0; i--) (function(i){
+		closebuttons[i].onclick = function() {
+			let indextodelete = i;
+
+			if (indextodelete !== -1) {
+				addbuttonstate[addedcoursesindex[indextodelete]].innerHTML = "Add";
+				$(buttons[addedcoursesindex[indextodelete]]).removeClass("changecolor");
+				deleteindexfromarray(indextodelete, addedcourses);
+				deleteindexfromarray(indextodelete, addedcoursesindex);
+				deleteindexfromarray(indextodelete, cls);
+				indextodelete !== -1 && addedcoursesshort.splice(indextodelete, 1);
+				showaddedcourses();
+			}
+
+		}
+	}) (i);
+
+	// if (addedcourses.length > 0)  picked.innerHTML = picked.innerHTML + addedcourses[addedcourses.length-1];
+}
+
+function pickedcourse(i, addbuttonstate, buttons) {
+	newdiv = document.createElement( "div" );
+	newdiv.className = "pickedclasses";
+	newdiv.innerHTML = addedcoursesshort[i];
+
+	closebutton = document.createElement("div");
+	closebuttonimg = document.createElement("span");
+	closebuttonimg.className = "iconify closebutton";
+	closebuttonimg.setAttribute("data-icon", "eva:close-fill");
+	closebutton.append(closebuttonimg);
+	closebutton.className = "closebuttons";
+
+	
+	newdiv.append(closebutton);
+	cls.push(closebutton);
+	return newdiv;
+	
 }
 // document.querySelectorAll(".outerdiv").forEach(button =>
 // 	button.addEventListener("click", () => {
@@ -138,8 +209,3 @@ function myFunction() {
         }
     }
 }
-
-
-$(document).ready(function(){
-    $(".picked").sticky({topSpacing:0});
-  });
